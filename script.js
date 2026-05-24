@@ -32,6 +32,7 @@ let videoTimerActive = false;
 let videoPlayerState = null;
 let videoTimerPausedByPlayer = false;
 let currentVideoId = null;
+let videoCountdownStarted = false;
 // Experiment state & monitoring
 let experimentStarted = false;
 let tabSwitchCount = 0;
@@ -148,11 +149,11 @@ function startMemorizationCountdown() {
 }
 
 function startVideoCountdown() {
-  // Start or resume video countdown immediately for the video phase
   videoCountdown = typeof videoCountdown === 'number' ? videoCountdown : 60;
   if (videoCountdown <= 0) videoCountdown = 60;
+  if (videoTimerActive) return;
+  videoCountdownStarted = true;
   updateCountdown(videoTimerElement, videoCountdown);
-  clearInterval(videoTimerId);
   videoTimerActive = true;
   videoTimerId = setInterval(() => {
     videoCountdown -= 1;
@@ -500,7 +501,7 @@ function hideMobilePlayOverlay() {
 
 function scheduleMobileAutoplayFallback() {
   setTimeout(() => {
-    if (screens.video && screens.video.classList.contains('active') && videoPlayerState !== YT.PlayerState.PLAYING) {
+    if (screens.video && screens.video.classList.contains('active') && videoPlayerState !== YT.PlayerState.PLAYING && !videoTimerActive) {
       showMobilePlayOverlay();
     }
   }, 1200);
@@ -523,9 +524,6 @@ function resumeActiveTimers() {
       } catch (e) {
         console.warn('Resume play failed', e);
       }
-      setTimeout(() => {
-        resumeVideoCountdown();
-      }, 250);
     } else {
       configureVideo();
     }
