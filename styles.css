@@ -407,8 +407,15 @@ h2 {
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.22));
-  pointer-events: all;
+  pointer-events: none;
   z-index: 10;
+}
+
+.video-caption {
+  margin: 12px 0 0;
+  color: rgba(226, 232, 255, 0.85);
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 .mobile-play-overlay {

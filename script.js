@@ -228,7 +228,7 @@ function createPlayer(videoId) {
       videoId: videoId,
       playerVars: {
         autoplay: 1,
-        controls: 0,
+        controls: 1,
         disablekb: 1,
         fs: 0,
         rel: 0,
