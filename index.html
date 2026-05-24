@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Memory Retention Experiment</title>
+  <!-- Bootstrap for accessibility/grid helpers -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div class="background-layer"></div>
+    <div class="glass-panel">
+      <header class="header-bar">
+        <div class="brand-group">
+          <span class="brand-mark">MR</span>
+          <div>
+            <p class="brand-label">Memory Retention Experiment</p>
+            <p class="brand-subtitle">AP Statistics Final Project</p>
+          </div>
+        </div>
+        <div class="progress-indicator" aria-hidden="true">
+          <span class="step-dot active"></span>
+          <span class="step-dot"></span>
+          <span class="step-dot"></span>
+          <span class="step-dot"></span>
+          <span class="step-dot"></span>
+          <span class="step-dot"></span>
+        </div>
+      </header>
+
+      <main class="content-shell">
+
+        <section class="page page-home active" data-step="home">
+          <div class="content-block home-block">
+            <p class="eyebrow">Scientific study</p>
+            <h1>Memory Retention Experiment</h1>
+            <p class="lead">This experiment tests how different types of short-form video content affect short-term memory retention.</p>
+            <button class="button button-primary" id="startButton">Start Experiment</button>
+          </div>
+        </section>
+
+        <section class="page page-treatment" data-step="treatment">
+          <div class="content-block centered-block">
+            <p class="eyebrow">Treatment assignment</p>
+            <h2>Select Your Assigned Treatment</h2>
+            <div class="treatment-grid">
+              <button class="button button-alt" data-treatment="1">Treatment 1</button>
+              <button class="button button-alt" data-treatment="2">Treatment 2</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page page-instructions" data-step="instructions">
+          <div class="content-block centered-block">
+            <p class="eyebrow">Ready your mind</p>
+            <h2>Instruction phase</h2>
+            <div class="instruction-copy">
+              <p>You will have <strong>30 seconds</strong> to memorize <strong>10 words</strong>.</p>
+              <p>Afterward, you will watch a <strong>1-minute video</strong>.</p>
+              <p>At the end, type as many words as you can remember.</p>
+            </div>
+            <div class="countdown-card">
+              <p>The memorization phase begins in</p>
+              <div class="timer large-timer" id="instructionTimer">10</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="page page-memorization" data-step="memorization">
+          <div class="content-block memorization-block">
+            <div class="memorization-header">
+              <div>
+                <p class="eyebrow">Memorization phase</p>
+                <h2>Remember these words</h2>
+              </div>
+              <div class="timer small-timer" id="memorizationTimer">30</div>
+            </div>
+            <div class="word-grid" id="wordGrid" role="list" aria-label="Memorization words">
+              <!-- Hard-coded grid: 5 columns x 2 rows on desktop, responsive on small screens -->
+              <div class="word-card static" role="listitem">Beach</div>
+              <div class="word-card static" role="listitem">Light</div>
+              <div class="word-card static" role="listitem">Train</div>
+              <div class="word-card static" role="listitem">House</div>
+              <div class="word-card static" role="listitem">Smart</div>
+              <div class="word-card static" role="listitem">Water</div>
+              <div class="word-card static" role="listitem">Plant</div>
+              <div class="word-card static" role="listitem">Smile</div>
+              <div class="word-card static" role="listitem">Bread</div>
+              <div class="word-card static" role="listitem">Cloud</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="page page-video" data-step="video">
+          <div class="content-block video-block">
+            <div class="video-topbar">
+              <div>
+                <p class="eyebrow">Video phase</p>
+                <h2>Watch carefully</h2>
+              </div>
+              <div class="timer small-timer" id="videoTimer">60</div>
+            </div>
+            <div class="video-frame">
+              <div class="iframe-mask"></div>
+              <!-- YouTube player will be created here by the IFrame API -->
+              <div id="experimentVideo"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="page page-recall" data-step="recall">
+          <div class="content-block centered-block recall-block">
+            <p class="eyebrow">Recall test</p>
+            <h2>Enter as many words as you can remember.</h2>
+            <p class="recall-hint">Type words separated by commas, spaces, or new lines. Punctuation and duplicates are ignored.</p>
+            <textarea id="recallInput" aria-label="Enter remembered words"></textarea>
+            <button class="button button-primary" id="submitButton">Submit Answers</button>
+          </div>
+        </section>
+
+        <section class="page page-results" data-step="results">
+          <div class="content-block centered-block results-block">
+            <p class="eyebrow">Experiment complete</p>
+            <h2>Well done.</h2>
+            <div class="result-display">
+              <p class="result-copy">You remembered</p>
+              <span id="scoreValue">0</span>
+              <p class="result-copy">out of 10 words.</p>
+            </div>
+            <p class="result-note">Please report your score to the researcher.</p>
+          </div>
+          <div class="confetti-layer" id="confettiLayer"></div>
+        </section>
+
+      </main>
+      <div id="warningOverlay" class="warning-overlay hidden" aria-hidden="true">
+        <div class="warning-card">
+          <p id="warningTitle" class="warning-title">Please remain on the experiment page.</p>
+          <p id="warningBody" class="warning-body">Switching tabs may affect the experiment. Return to the page to continue.</p>
+          <div class="warning-actions">
+            <button id="returnFsBtn" class="button button-primary">Return to Fullscreen</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script src="script.js"></script>
+</body>
+</html>
