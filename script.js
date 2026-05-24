@@ -207,6 +207,7 @@ function configureVideo() {
         currentVideoId = videoId;
         videoPlayerState = null;
         player.loadVideoById({ videoId, startSeconds: 0 });
+        player.playVideo();
       } else {
         player.playVideo();
       }
@@ -238,6 +239,7 @@ function createPlayer(videoId) {
       events: {
         onReady: (e) => {
           try {
+            e.target.mute();
             e.target.playVideo();
           } catch (err) {
             console.warn('Player ready play failed', err);
