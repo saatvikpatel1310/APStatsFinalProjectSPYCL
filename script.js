@@ -58,6 +58,8 @@ const warningOverlay = document.getElementById("warningOverlay");
 const warningTitle = document.getElementById("warningTitle");
 const warningBody = document.getElementById("warningBody");
 const returnFsBtn = document.getElementById("returnFsBtn");
+const mobilePlayOverlay = document.getElementById("mobilePlayOverlay");
+const mobilePlayButton = document.getElementById("mobilePlayButton");
 
 const screens = {};
 stepOrder.forEach((step) => {
@@ -207,12 +209,12 @@ function configureVideo() {
         currentVideoId = videoId;
         videoPlayerState = null;
         player.loadVideoById({ videoId, startSeconds: 0 });
-        player.playVideo();
-      } else {
-        player.playVideo();
       }
+      player.playVideo();
+      scheduleMobileAutoplayFallback();
     } catch (e) {
       console.warn('Player load error', e);
+      showMobilePlayOverlay();
     }
   } else if (ytReady && !player) {
     createPlayer(videoId);
@@ -244,6 +246,7 @@ function createPlayer(videoId) {
           } catch (err) {
             console.warn('Player ready play failed', err);
           }
+          scheduleMobileAutoplayFallback();
         },
         onStateChange: (e) => {
           handleVideoStateChange(e.data);
@@ -267,6 +270,7 @@ function createPlayer(videoId) {
 function handleVideoStateChange(state) {
   videoPlayerState = state;
   if (state === YT.PlayerState.PLAYING) {
+    hideMobilePlayOverlay();
     videoTimerPausedByPlayer = false;
     try { player.unMute(); player.setVolume(100); } catch (e) {}
     if (!videoTimerActive) {
@@ -461,6 +465,15 @@ if (returnFsBtn) {
   });
 }
 
+if (mobilePlayButton) {
+  mobilePlayButton.addEventListener('click', () => {
+    if (player && typeof player.playVideo === 'function') {
+      try { player.playVideo(); } catch (e) { console.warn('Mobile play retry failed', e); }
+    }
+    hideMobilePlayOverlay();
+  });
+}
+
 function pauseActiveTimers() {
   // clear intervals and leave countdown variables as-is
   if (instructionTimerId) { clearInterval(instructionTimerId); instructionTimerId = null; }
@@ -471,6 +484,26 @@ function pauseActiveTimers() {
   if (player && typeof player.pauseVideo === 'function') {
     try { player.pauseVideo(); } catch (e) { /* ignore */ }
   }
+}
+
+function showMobilePlayOverlay() {
+  if (!mobilePlayOverlay) return;
+  mobilePlayOverlay.classList.remove('hidden');
+  mobilePlayOverlay.setAttribute('aria-hidden', 'false');
+}
+
+function hideMobilePlayOverlay() {
+  if (!mobilePlayOverlay) return;
+  mobilePlayOverlay.classList.add('hidden');
+  mobilePlayOverlay.setAttribute('aria-hidden', 'true');
+}
+
+function scheduleMobileAutoplayFallback() {
+  setTimeout(() => {
+    if (screens.video && screens.video.classList.contains('active') && videoPlayerState !== YT.PlayerState.PLAYING) {
+      showMobilePlayOverlay();
+    }
+  }, 1200);
 }
 
 function resumeActiveTimers() {

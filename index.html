@@ -104,6 +104,10 @@
             </div>
             <div class="video-frame">
               <div class="iframe-mask"></div>
+              <div id="mobilePlayOverlay" class="mobile-play-overlay hidden" aria-hidden="true">
+                <button id="mobilePlayButton" class="button button-primary">Tap to start the video</button>
+                <p class="mobile-play-copy">If the video does not start automatically, tap here to continue the experiment.</p>
+              </div>
               <!-- YouTube player will be created here by the IFrame API -->
               <div id="experimentVideo"></div>
             </div>
